@@ -1,40 +1,53 @@
-import React, { Dispatch, SetStateAction } from 'react'
-import { styled } from '@mui/material/styles';
-import LinearProgress, { linearProgressClasses } from '@mui/material/LinearProgress';
-import { openFullscreen, testMobile, webpORpng } from '../../utils';
+// src/components/pixicomp/Splash.tsx
+import React, { useEffect } from 'react';
+import { useAviator } from '../../store/aviator';
+import { playSound, stopSound } from '../../utils';
 
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-    height: 10,
-    borderRadius: 5,
-    [`&.${linearProgressClasses.colorPrimary}`]: {
-        backgroundColor: "#393939",
-    },
-    [`& .${linearProgressClasses.bar}`]: {
-        borderRadius: 5,
-        backgroundColor: "#E59407",
-    },
-}));
-
-const Splash = ({ loaded, setOpenGame }: { loaded: boolean, setOpenGame: Dispatch<SetStateAction<boolean>> }) => {
-
-    return (
-        <div className='flex flex-col gap-10 w-full items-center text-white justify-center' style={{ height: "calc(100vh - 50px)" }}>
-            <div className='flex flex-col gap-4 items-center justify-center'>
-                <svg width={243} height={105} className='-rotate-[25deg]'><use href="#svg-plane" /></svg>
-
-                <img alt="aviator" src={`${process.env.REACT_APP_ASSETS_IMAGE_URL}${webpORpng}/aviator-text.${webpORpng}`} className='w-[200px]' />
-
-            </div>
-            {loaded ?
-                < button onClick={() => {
-                    setOpenGame(true)
-                    if (!testMobile().iPhone)
-                        openFullscreen()
-                }} className='px-8 py-2 text-lg rounded-full border border-[#fff] bg-gradient-to-b from-[#E59407] to-[#412900] uppercase font-bold'>Start</button> :
-                <div className='w-60 py-4'>
-                    <BorderLinearProgress />
-                </div>}
-        </div >
-    )
+interface SplashProps {
+  loaded: boolean;
+  setOpenGame: React.Dispatch<React.SetStateAction<boolean>>;
 }
+
+const Splash: React.FC<SplashProps> = ({ loaded, setOpenGame }) => {
+  const { aviatorState } = useAviator();
+
+  useEffect(() => {
+    // Play background sound while splash is active
+    if (loaded) playSound('bg');
+    return () => stopSound('bg');
+  }, [loaded]);
+
+  const handleStartGame = () => {
+    setOpenGame(true);
+  };
+
+  return (
+    <div
+      className="w-full h-screen flex flex-col justify-center items-center bg-black text-white"
+      style={{ background: 'linear-gradient(180deg, #000000 0%, #1C1C1C 100%)' }}
+    >
+      <img
+        src={`${process.env.REACT_APP_ASSETS_IMAGE_URL}/logo.png`}
+        alt="SkyFly Crash"
+        className="mb-8 w-40 sm:w-60"
+      />
+      <h1 className="text-3xl sm:text-5xl font-bold mb-4">SkyFly Crash</h1>
+      <p className="mb-8 text-gray-300">Get ready to test your luck!</p>
+
+      {aviatorState.auth ? (
+        <button
+          onClick={handleStartGame}
+          className="px-6 py-3 bg-yellow-500 hover:bg-yellow-600 text-black font-bold rounded-lg transition duration-300"
+        >
+          Start Game
+        </button>
+      ) : (
+        <p className="text-red-500 font-semibold">Access Denied: Invalid Token</p>
+      )}
+
+      {!loaded && <p className="mt-4 text-gray-400">Loading assets...</p>}
+    </div>
+  );
+};
+
 export default Splash;
