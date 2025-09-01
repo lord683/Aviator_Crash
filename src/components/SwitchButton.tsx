@@ -1,54 +1,54 @@
+// src/components/SwitchButton.tsx
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
+import { Switch } from '@mui/material';
 
-const AntSwitch = styled(Switch)(({ theme }) => ({
-    width: 40,
-    height: 20,
-    padding: 0,
-    display: 'flex',
-    '&:active': {
-        '& .MuiSwitch-thumb': {
-            width: 15,
-        },
-        '& .MuiSwitch-switchBase.Mui-checked': {
-            transform: 'translateX(9px)',
-        },
-    },
-    '& .MuiSwitch-switchBase': {
-        padding: 2,
-        '&.Mui-checked': {
-            transform: 'translateX(18px)',
+interface SwitchButtonProps {
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void;
+  disabled?: boolean;
+}
+
+const SwitchButton: React.FC<SwitchButtonProps> = ({ checked, onChange, disabled = false }) => {
+  return (
+    <Switch
+      checked={checked}
+      onChange={onChange}
+      disabled={disabled}
+      sx={{
+        width: 42,
+        height: 26,
+        padding: 0,
+        '& .MuiSwitch-switchBase': {
+          padding: 0,
+          margin: 2,
+          transitionDuration: '300ms',
+          '&.Mui-checked': {
+            transform: 'translateX(16px)',
             color: '#fff',
             '& + .MuiSwitch-track': {
-                opacity: 1,
-                backgroundColor: theme.palette.mode === 'dark' ? '#177ddc' : '#1890ff',
+              backgroundColor: '#EFAC01',
+              opacity: 1,
+              border: 0,
             },
+          },
+          '&.Mui-disabled + .MuiSwitch-track': {
+            opacity: 0.5,
+          },
         },
-    },
-    '& .MuiSwitch-thumb': {
-        boxShadow: '0 2px 4px 0 rgb(0 35 11 / 20%)',
-        width: 14,
-        height: 14,
-        borderRadius: 7,
-        transition: theme.transitions.create(['width'], {
-            duration: 200,
-        }),
-        transform: 'translateX(2px) translateY(1px)',
-    },
-    '& .MuiSwitch-track': {
-        borderRadius: 20 / 2,
-        opacity: 1,
-        backgroundColor:
-            theme.palette.mode === 'dark' ? 'rgba(255,255,255,.35)' : 'rgba(255,255,255,.25)',
-        boxSizing: 'border-box',
-        borderWidth: 1,
-        borderColor: "#ffffff44"
-    },
-}));
+        '& .MuiSwitch-thumb': {
+          boxSizing: 'border-box',
+          width: 22,
+          height: 22,
+        },
+        '& .MuiSwitch-track': {
+          borderRadius: 26 / 2,
+          backgroundColor: '#3E3E43',
+          opacity: 1,
+          transition: 'background-color 300ms',
+        },
+      }}
+    />
+  );
+};
 
-export default function SwitchButton({ checked, onChange, disabled }: { checked: boolean, onChange: (event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => void, disabled: boolean }) {
-    return (
-        <AntSwitch checked={checked} disabled={disabled} onChange={onChange} inputProps={{ 'aria-label': 'ant design' }} />
-    );
-}
+export default SwitchButton;
