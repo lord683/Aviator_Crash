@@ -1,13 +1,20 @@
-
+// src/App.js
+import { useEffect } from "react";
 import { ToastContainer } from 'react-toastify';
 import './App.css';
 import 'react-toastify/dist/ReactToastify.css';
 import Aviator from './components/aviator';
-import SVGs from './components/svgs'
-import AviatorProvider from './store/aviator'
+import SVGs from './components/svgs';
+import AviatorProvider from './store/aviator';
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SnackbarProvider } from 'notistack';
+
 function App() {
+  useEffect(() => {
+    // Browser tab title
+    document.title = "SkyFly Crash";
+  }, []);
+
   return (
     <>
       <ToastContainer
@@ -23,16 +30,12 @@ function App() {
         theme="colored"
       />
       <SVGs />
-      <SnackbarProvider
-        maxSnack={3}
-        // Components={{
-        //   cashout: CashoutSnackBar,
-        // }}
-      >
+      <SnackbarProvider maxSnack={3}>
         <AviatorProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="aviator">
+              {/* route path changed from "aviator" -> "skyfly" */}
+              <Route path="skyfly">
                 <Route index element={<Aviator />} />
               </Route>
             </Routes>
