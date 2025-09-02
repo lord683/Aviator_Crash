@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -24,20 +25,25 @@ jobs:
       - name: Build React App
         run: npm run build
 
+      - name: Setup Java (JDK 17 for Gradle)
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Install Capacitor CLI
         run: npm install @capacitor/cli -g
 
       - name: Add Android platform
         run: npx cap add android || true
 
-      - name: Sync with Capacitor
+      - name: Sync Capacitor
         run: npx cap sync android
 
       - name: Build Android APK
         run: |
           cd android
           ./gradlew assembleRelease
-        shell: bash
 
       - name: Upload APK
         uses: actions/upload-artifact@v3
