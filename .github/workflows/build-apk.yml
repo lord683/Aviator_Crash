@@ -10,9 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_SDK_ROOT: ${{ runner.temp }}/android-sdk
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -45,6 +42,7 @@ jobs:
 
       - name: Setup Android SDK
         run: |
+          ANDROID_SDK_ROOT=$RUNNER_TEMP/android-sdk
           mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
           cd $ANDROID_SDK_ROOT/cmdline-tools
           curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
@@ -52,6 +50,7 @@ jobs:
           rm commandlinetools.zip
           yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
           yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+        shell: bash
 
       - name: Set Gradle executable
         run: chmod +x android/gradlew
