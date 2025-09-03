@@ -1,10 +1,12 @@
-name: Build & Sign APK
+name: Build APK
 
 on:
   push:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -32,7 +34,7 @@ jobs:
           java-version: 17
 
       - name: Install Capacitor CLI
-        run: npm install @capacitor/cli -g
+        run: npm install -g @capacitor/cli
 
       - name: Add Android platform
         run: npx cap add android || true
@@ -40,24 +42,11 @@ jobs:
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # 🔑 Decode and restore the keystore
-      - name: Decode keystore
-        run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/skyfly-release.keystore
-        env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
-
-      # 📦 Build signed APK
-      - name: Build signed APK
+      - name: Build Android APK
         run: |
           cd android
-          ./gradlew assembleRelease \
-            -Pandroid.injected.signing.store.file=app/skyfly-release.keystore \
-            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
-            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
-            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
+          ./gradlew assembleRelease
 
-      # ⬆️ Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
