@@ -1,48 +1,42 @@
-// src/components/RuleDialog.tsx
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import CloseIcon from '@mui/icons-material/Close';
+import { useAviator } from '../store/aviator';
+import { Dialog } from './ui/dialog';
+import { Button } from './ui/button';
 
-interface RuleDialogProps {
-  open: boolean;
-  onClose: () => void;
-}
+export default function RuleModal({ open, setOpen }: { open: boolean, setOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
+    const handleClose = () => setOpen(false);
 
-export default function RuleDialog({ open, onClose }: RuleDialogProps) {
-  return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg rounded-2xl p-6">
-        <DialogHeader>
-          <DialogTitle className="text-xl font-bold">Game Rules</DialogTitle>
-          <DialogDescription>
-            Learn how to play SkyFly Crash before you start betting.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="space-y-3 text-sm text-gray-700">
-          <p>
-            1️⃣ Place your bet before the round starts.  
-          </p>
-          <p>
-            2️⃣ The plane (multiplier) will take off and rise randomly.  
-          </p>
-          <p>
-            3️⃣ Cash out before the plane flies away to secure your winnings.  
-          </p>
-          <p>
-            4️⃣ If you don’t cash out in time, your bet is lost.  
-          </p>
-        </div>
-        <div className="mt-6 flex justify-end">
-          <Button onClick={onClose} className="rounded-xl px-6">
-            Got it
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-}
+    return (
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            className='overflow-y-auto'
+        >
+            <div className='mx-auto max-w-[600px] text-white mt-10 p-2 overflow-y-auto'>
+                <Dialog className='border border-[#7C4F00] rounded-[8px] overflow-hidden bg-black/90'>
+                    <div className='h-8 bg-[#E59407] text-black text-[16px] font-bold items-center px-4 flex justify-between'>
+                        <span>Game Rules</span>
+                        <button onClick={handleClose} className='cursor-pointer'><CloseIcon /></button>
+                    </div>
+                    <div className='p-6 flex flex-col gap-4'>
+                        <p className='text-[14px]'>
+                            1. Place your bets before the round starts.<br/>
+                            2. The multiplier increases over time.<br/>
+                            3. Cash out before the plane flies away to win.<br/>
+                            4. If you don't cash out, you lose the bet.<br/>
+                        </p>
+                        <div className='flex justify-end mt-4'>
+                            <Button onClick={handleClose} className='bg-[#E59407] text-black px-4 py-2 rounded'>
+                                Close
+                            </Button>
+                        </div>
+                    </div>
+                </Dialog>
+            </div>
+        </Modal>
+    );
+                      }
