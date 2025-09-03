@@ -11,58 +11,35 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2. Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      # 3. Install dependencies
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
-      # 4. Build React web app
       - name: Build React App
         run: npm run build
 
-      # 5. Setup Java for Gradle
       - name: Setup Java
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
-      # 6. Install Capacitor CLI
       - name: Install Capacitor CLI
-        run: npm install @capacitor/cli -g
+        run: npm install -g @capacitor/cli
 
-      # 7. Add Android platform (skip if exists)
       - name: Add Android platform
         run: npx cap add android || true
 
-      # 8. Sync Capacitor
       - name: Sync Capacitor
         run: npx cap sync android
 
-      # 9. Build Debug APK
-      - name: Build Debug APK
-        run: |
-          cd android
-          ./gradlew assembleDebug
-        shell: bash
-
-      # 10. Upload Debug APK
-      - name: Upload Debug APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: SkyFlyCrash-debug.apk
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-
-      # 11. Build Release APK (signed)
       - name: Decode Keystore
         run: echo "${{ secrets.SKYFLY_KEYSTORE_B64 }}" | base64 --decode > android/skyfly-release.keystore
 
@@ -76,7 +53,6 @@ jobs:
             -Pandroid.injected.signing.key.password=${{ secrets.SKYFLY_KEY_PASSWORD }}
         shell: bash
 
-      # 12. Upload Release APK
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
