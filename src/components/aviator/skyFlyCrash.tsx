@@ -9,7 +9,7 @@ import { urls } from '../../utils/urls'
 import Splash from '../pixicomp/Splash'
 import { Game_Global_Vars, initBet6, loadSound } from '../../utils'
 import TopLogoBar from '../TopLogoBar'
-import RuleModal from '../RuleDialog'
+import RuleModal from '../RuleModal'       // ✅ FIXED
 import SettingModal from '../SettingModal'
 import HistoryModal from '../HistoryModal'
 import PaymentModal from '../PaymentModal'
@@ -32,14 +32,14 @@ const SkyFlyCrash = () => {
     useEffect(() => {
         Assets.load(urls).then(() => {
             (async () => {
-                const urlParams = new URLSearchParams(window.location.search);
-                const token: string = urlParams.get('token') || "";
+                const urlParams = new URLSearchParams(window.location.search)
+                const token: string = urlParams.get('token') || ""
                 if (!token) {
                     setAviatorState(prev => ({ ...prev, auth: false }))
                     return
                 }
                 delete axios.defaults.headers.common['Accept']
-                axios.defaults.headers.common['token'] = token;
+                axios.defaults.headers.common['token'] = token
                 axios.defaults.baseURL = process.env.REACT_APP_API_URL || "https://skyfly-crash-api.com"
                 axios.defaults.timeout = 20000
                 try {
@@ -63,7 +63,7 @@ const SkyFlyCrash = () => {
                     const socket = io(process.env.REACT_APP_SOCKET_URL || "https://skyfly-crash-socket.com:3001", {
                         auth: { token },
                         transports: ["websocket"]
-                    });
+                    })
                     setAviatorState(prev => ({ ...prev, socket, token }))
                     socket.on('connect', () => console.log('Connected to SkyFly Crash server!'))
                     socket.on('disconnect', () => console.log('Disconnected from SkyFly Crash server!'))
@@ -78,7 +78,7 @@ const SkyFlyCrash = () => {
                 }
             })()
             loadSound()
-        });
+        })
 
         return () => {
             aviatorState.socket?.removeAllListeners()
