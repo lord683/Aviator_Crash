@@ -14,18 +14,24 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v3
 
+      - name: List src folder (for debug)
+        run: ls -la src
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: npm install --legacy-peer-deps
 
       - name: Build React App
         run: |
           echo "Starting React build..."
-          npm run build || { echo 'React build failed! Check errors above.'; exit 1; }
+          if ! npm run build; then
+            echo "React build failed! Check file names and imports."
+            exit 1
+          fi
 
       - name: Setup Java JDK 17
         uses: actions/setup-java@v3
