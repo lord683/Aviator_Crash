@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch:   # manual trigger
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,11 +19,13 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install dependencies (ignore peer deps)
+      - name: Install Dependencies
         run: npm install --legacy-peer-deps
 
       - name: Build React App
-        run: npm run build
+        run: |
+          echo "Starting React build..."
+          npm run build || { echo 'React build failed! Check errors above.'; exit 1; }
 
       - name: Setup Java JDK 17
         uses: actions/setup-java@v3
@@ -44,7 +46,7 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_B64 }}" | base64 --decode > android/skyfly-release.keystore
 
-      - name: Build Signed APK
+      - name: Build APK
         run: |
           cd android
           ./gradlew assembleRelease \
