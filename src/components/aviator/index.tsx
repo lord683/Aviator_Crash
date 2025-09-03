@@ -9,7 +9,7 @@ import { urls } from '../../utils/urls'
 import Splash from '../pixicomp/Splash'
 import { Game_Global_Vars, initBet6, loadSound } from '../../utils'
 import TopLogoBar from '../TopLogoBar'
-import RuleModal from '../RuleDialog'
+import RuleModal from '../RuleModal'  // ✅ Fixed import
 import SettingModal from '../SettingModal'
 import HistoryModal from '../HistoryModal'
 
@@ -85,7 +85,12 @@ const SkyFlyCrash = () => {
 
     return (
         <>
-            <TopLogoBar loaded={loaded} setSettingModalOpen={setSettingModalOpen} setHistoryModalOpen={setHistoryModalOpen} setRuleModalOpen={setRuleModalOpen} />
+            <TopLogoBar 
+                loaded={loaded} 
+                setSettingModalOpen={setSettingModalOpen} 
+                setHistoryModalOpen={setHistoryModalOpen} 
+                setRuleModalOpen={setRuleModalOpen} 
+            />
             {aviatorState.auth ?
                 (openGame && loaded ?
                     <GameBoard bet6={bet6} />
