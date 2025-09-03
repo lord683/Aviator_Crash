@@ -1,4 +1,4 @@
-name: Build APK
+name: Build & Sign APK
 
 on:
   push:
@@ -19,47 +19,45 @@ jobs:
         with:
           node-version: 20
 
-      - name: Install npm dependencies
+      - name: Install dependencies
         run: npm install
 
       - name: Build React App
         run: npm run build
 
-      - name: Setup Java (JDK 17)
+      - name: Setup Java (JDK 17 for Gradle)
         uses: actions/setup-java@v3
         with:
           distribution: temurin
           java-version: 17
 
       - name: Install Capacitor CLI
-        run: npm install -g @capacitor/cli
+        run: npm install @capacitor/cli -g
 
-      - name: Add Android platform (if missing)
-        run: npx cap add android || echo "Android already added"
+      - name: Add Android platform
+        run: npx cap add android || true
 
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Setup Android SDK
+      # 🔑 Decode and restore the keystore
+      - name: Decode keystore
         run: |
-          ANDROID_SDK_ROOT=$RUNNER_TEMP/android-sdk
-          mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
-          cd $ANDROID_SDK_ROOT/cmdline-tools
-          curl -o commandlinetools.zip https://dl.google.com/android/repository/commandlinetools-linux-9477386_latest.zip
-          unzip commandlinetools.zip
-          rm commandlinetools.zip
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses
-          yes | $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools/bin/sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
-        shell: bash
+          echo "$KEYSTORE_BASE64" | base64 --decode > android/app/skyfly-release.keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
 
-      - name: Set Gradle executable
-        run: chmod +x android/gradlew
-
-      - name: Build Android APK
+      # 📦 Build signed APK
+      - name: Build signed APK
         run: |
           cd android
-          ./gradlew assembleRelease
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=app/skyfly-release.keystore \
+            -Pandroid.injected.signing.store.password=${{ secrets.KEYSTORE_PASSWORD }} \
+            -Pandroid.injected.signing.key.alias=${{ secrets.KEY_ALIAS }} \
+            -Pandroid.injected.signing.key.password=${{ secrets.KEY_PASSWORD }}
 
+      # ⬆️ Upload APK artifact
       - name: Upload APK
         uses: actions/upload-artifact@v3
         with:
