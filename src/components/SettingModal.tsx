@@ -1,12 +1,4 @@
 import React, { useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Switch,
-} from "react-native";
 
 interface SettingModalProps {
   visible: boolean;
@@ -18,90 +10,56 @@ const SettingModal: React.FC<SettingModalProps> = ({ visible, onClose }) => {
   const [vibrationEnabled, setVibrationEnabled] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
+  if (!visible) return null;
+
   return (
-    <Modal transparent visible={visible} animationType="slide">
-      <View style={styles.overlay}>
-        <View style={styles.container}>
-          <Text style={styles.title}>⚙️ Settings</Text>
+    <div className="fixed inset-0 flex items-end bg-black bg-opacity-50 z-50">
+      <div className="bg-white w-full rounded-t-2xl p-6 shadow-lg">
+        <h2 className="text-xl font-bold mb-4">⚙️ Settings</h2>
 
-          {/* Sound setting */}
-          <View style={styles.option}>
-            <Text style={styles.label}>Sound Effects</Text>
-            <Switch
-              value={soundEnabled}
-              onValueChange={setSoundEnabled}
-              thumbColor={soundEnabled ? "#4CAF50" : "#999"}
-            />
-          </View>
+        {/* Sound */}
+        <div className="flex justify-between items-center mb-3">
+          <span>Sound Effects</span>
+          <input
+            type="checkbox"
+            checked={soundEnabled}
+            onChange={() => setSoundEnabled(!soundEnabled)}
+            className="h-5 w-5"
+          />
+        </div>
 
-          {/* Vibration */}
-          <View style={styles.option}>
-            <Text style={styles.label}>Vibration</Text>
-            <Switch
-              value={vibrationEnabled}
-              onValueChange={setVibrationEnabled}
-              thumbColor={vibrationEnabled ? "#4CAF50" : "#999"}
-            />
-          </View>
+        {/* Vibration */}
+        <div className="flex justify-between items-center mb-3">
+          <span>Vibration</span>
+          <input
+            type="checkbox"
+            checked={vibrationEnabled}
+            onChange={() => setVibrationEnabled(!vibrationEnabled)}
+            className="h-5 w-5"
+          />
+        </div>
 
-          {/* Dark Mode */}
-          <View style={styles.option}>
-            <Text style={styles.label}>Dark Mode</Text>
-            <Switch
-              value={darkMode}
-              onValueChange={setDarkMode}
-              thumbColor={darkMode ? "#4CAF50" : "#999"}
-            />
-          </View>
+        {/* Dark Mode */}
+        <div className="flex justify-between items-center mb-3">
+          <span>Dark Mode</span>
+          <input
+            type="checkbox"
+            checked={darkMode}
+            onChange={() => setDarkMode(!darkMode)}
+            className="h-5 w-5"
+          />
+        </div>
 
-          {/* Close button */}
-          <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-            <Text style={styles.closeText}>Close</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </Modal>
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="mt-4 bg-green-500 text-white py-2 px-4 rounded-lg w-full"
+        >
+          Close
+        </button>
+      </div>
+    </div>
   );
 };
 
 export default SettingModal;
-
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-    backgroundColor: "rgba(0,0,0,0.5)",
-  },
-  container: {
-    backgroundColor: "#fff",
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 15,
-  },
-  option: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginVertical: 8,
-  },
-  label: {
-    fontSize: 16,
-  },
-  closeBtn: {
-    marginTop: 20,
-    padding: 12,
-    backgroundColor: "#4CAF50",
-    borderRadius: 10,
-    alignItems: "center",
-  },
-  closeText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
